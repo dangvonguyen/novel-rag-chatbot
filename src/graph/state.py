@@ -5,5 +5,5 @@ from langchain_core.documents import Document
 
 class State(TypedDict):
     question: str
-    context: list[Document]
+    documents: list[Document]
     answer: str

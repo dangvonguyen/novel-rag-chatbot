@@ -1,26 +1,28 @@
 from langchain_core.documents import Document
 from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnableConfig
 from langgraph.graph import END, START, StateGraph
 
-from src.components import prompts
 from src.components.llms import load_chat_model
-from src.components.retrievers import make_embedder, make_pinecone_retriever
+from src.components.retrievers import make_retriever
+from src.configs import Configuration
 from src.graph.state import State
+from src.utils import format_docs
 
 
-def retrieve(state: State) -> dict[str, list[Document]]:
-    embedding_model = make_embedder("huggingface/hiieu/halong_embedding")
-    retriever = make_pinecone_retriever(embedding_model)
+def retrieve(state: State, *, config: RunnableConfig) -> dict[str, list[Document]]:
+    retriever = make_retriever(config)
     retrieved_docs = retriever.invoke(state["question"])
-    return {"context": retrieved_docs}
+    return {"documents": retrieved_docs}
 
 
-def generate(state: State):
-    docs_content = "\n\n".join(doc.page_content for doc in state["context"])
-    prompt = PromptTemplate.from_template(prompts.QA_TEMPLATE)
-    messages = prompt.invoke({"question": state["question"], "context": docs_content})
-    llm = load_chat_model()
-    response = llm.invoke(messages)
+def generate(state: State, *, config: RunnableConfig):
+    configuration = Configuration.from_runnable_config(config)
+    model = load_chat_model(configuration.response_model)
+    context = format_docs(state["documents"])
+    prompt = PromptTemplate.from_template(configuration.qa_system_prompt)
+    messages = prompt.invoke({"query": state["question"], "context": context})
+    response = model.invoke(messages)
     return {"answer": response.content}
 
 
