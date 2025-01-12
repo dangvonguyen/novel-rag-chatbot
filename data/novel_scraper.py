@@ -113,7 +113,7 @@ class NovelScraper:
     def _parse_content(self, soup: BeautifulSoup) -> Optional[str]:
         """Parse content from HTML based on CSS selectors."""
         try:
-            content = soup.find(attrs={'class': 'chapter-c'}).get_text('\n\n')
+            content = soup.find(attrs={"class": "chapter-c"}).get_text(" ", strip=True)
             return content
         except AttributeError:
             return None
@@ -149,6 +149,5 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    args.novel_url = "https://truyenfull.io/kiem-lai/"
     scraper = NovelScraper(args.novel_url, args.save_dir, args.delay)
     scraper.scrape_multiple_chapters(start=args.start, end=args.end, is_save=True)
