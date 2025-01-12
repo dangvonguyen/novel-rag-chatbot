@@ -1,5 +1,6 @@
-data/*
+data/
 !data/*.py
+!data/example-novel/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

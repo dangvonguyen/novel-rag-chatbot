@@ -1,0 +1,10 @@
+{
+    "Tên truyện": "Example Novel Name",
+    "Tác giả": "Author",
+    "Thể loại": [
+        "Genre 1",
+        "Genre 2",
+        "Genre 3"
+    ],
+    "Giới thiệu": "An introduction to the novel."
+}
