@@ -6,9 +6,12 @@ from langchain_core.embeddings import Embeddings
 from langchain_core.runnables import RunnableConfig
 from langchain_core.vectorstores import VectorStoreRetriever
 
-from src.components.embedders import make_embedder
 from src.configs import Configuration
-from src.utils import get_embedding_dimension, get_literal_values
+from src.utils import (
+    get_embedding_dimension,
+    get_literal_values,
+    load_embedder,
+)
 
 
 @contextmanager
@@ -40,7 +43,7 @@ def make_retriever(
 ) -> Generator[VectorStoreRetriever, None, None]:
     """Create a retriever for the agent, based on the current configuration."""
     configuration = Configuration.from_runnable_config(config)
-    embedding_model = make_embedder(configuration.embedding_model)
+    embedding_model = load_embedder(configuration.embedding_model)
     match configuration.retriever_provider:
         case "pinecone":
             with make_pinecone_retriever(configuration, embedding_model) as retriever:

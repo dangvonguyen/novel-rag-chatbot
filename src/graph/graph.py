@@ -3,11 +3,10 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import END, START, StateGraph
 
-from src.components.llms import load_chat_model
 from src.components.retrievers import make_retriever
 from src.configs import Configuration
 from src.graph.state import State
-from src.utils import format_docs
+from src.utils import format_docs, load_chat_model
 
 
 def retrieve(state: State, *, config: RunnableConfig) -> dict[str, list[Document]]:
