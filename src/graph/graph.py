@@ -11,8 +11,8 @@ from src.utils import format_docs
 
 
 def retrieve(state: State, *, config: RunnableConfig) -> dict[str, list[Document]]:
-    retriever = make_retriever(config)
-    retrieved_docs = retriever.invoke(state["question"])
+    with make_retriever(config) as retriever:
+        retrieved_docs = retriever.invoke(state["question"])
     return {"documents": retrieved_docs}
 
 

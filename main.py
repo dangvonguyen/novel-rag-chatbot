@@ -9,8 +9,8 @@ docs = doc_manager.load_documents("data")
 chunked_docs = doc_manager.split_documents(docs)
 
 # Add to vector store
-retriever = make_retriever()
-retriever.add_documents(chunked_docs)
+with make_retriever() as retriever:
+    retriever.add_documents(chunked_docs)
 
 # Build graph
 graph = build_graph()
