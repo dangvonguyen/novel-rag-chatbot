@@ -15,7 +15,7 @@ class Configuration:
     ] = field(
         default="huggingface/hiieu/halong_embedding",
         metadata={
-            "description": "Name of the embedding model to use. Must be a valid embedding model name."
+            "description": "Name of the embedding model to use. Must be in the form: provider/model-name."
         },
     )
 
@@ -40,20 +40,46 @@ class Configuration:
 
     # Model
 
+    query_model: Annotated[str, {"__template_metadata__": {"kind": "llm"}}] = field(
+        default="openai/gpt-40-mini",
+        metadata={
+            "description": "The language model used for processing and refining queries. Must be in the form: provider/model."
+        },
+    )
+
     response_model: Annotated[str, {"__template_metadata__": {"kind": "llm"}}] = field(
         default="openai/gpt-4o-mini",
         metadata={
-            "description": "The language model used for generating responses. Should be in the form: provider/model-name."
+            "description": "The language model used for generating responses. Must be in the form: provider/model."
         },
     )
 
     # Prompts
 
-    qa_system_prompt: str = field(
-        default=prompts.QA_SYSTEM_PROMPT,
+    router_system_prompt: str = field(
+        default=prompts.ROUTER_SYSTEM_PROMPT,
         metadata={
-            "description": "The question-answering system prompt used for generating responses"
+            "description": "The system prompt used for classifying user questions to route them to the correct node."
         },
+    )
+
+    more_info_system_prompt: str = field(
+        default=prompts.MORE_INFO_SYSTEM_PROMPT,
+        metadata={
+            "description": "The system prompt used for asking for more information from the user."
+        },
+    )
+
+    general_system_prompt: str = field(
+        default=prompts.GENERAL_SYSTEM_PROMPT,
+        metadata={
+            "description": "The system prompt used for responding to general questions."
+        },
+    )
+
+    response_system_prompt: str = field(
+        default=prompts.RESPONSE_SYSTEM_PROMPT,
+        metadata={"description": "The system prompt used for generating responses."},
     )
 
     @classmethod
