@@ -50,6 +50,7 @@ def ask_for_more_info(
     """Generate answer."""
     configuration = Configuration.from_runnable_config(config)
     model = load_chat_model(configuration.response_model)
+    model = model.with_config({"run_name": "respond"})
     prompt = configuration.more_info_system_prompt.format(
         logic=state["router"]["logic"]
     )
@@ -62,6 +63,7 @@ def respond_to_general_query(state: State, *, config: RunnableConfig):
     """Generate answer."""
     configuration = Configuration.from_runnable_config(config)
     model = load_chat_model(configuration.response_model)
+    model = model.with_config({"run_name": "respond"})
     prompt = configuration.general_system_prompt.format(logic=state["router"]["logic"])
     messages = [{"role": "system", "content": prompt}] + state["messages"]
     response = model.invoke(messages)
@@ -72,6 +74,7 @@ def respond_with_context(state: State, *, config: RunnableConfig):
     """Generate answer."""
     configuration = Configuration.from_runnable_config(config)
     model = load_chat_model(configuration.response_model)
+    model = model.with_config({"run_name": "respond"})
     context = format_docs(state["documents"])
     prompt = configuration.response_system_prompt.format(context=context)
     messages = [{"role": "system", "content": prompt}] + state["messages"]
