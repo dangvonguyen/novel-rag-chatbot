@@ -1,7 +1,7 @@
 from typing import Literal, cast
 
 from langchain_core.documents import Document
-from langchain_core.messages import BaseMessage
+from langchain_core.messages import BaseMessage, RemoveMessage
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import END, START, StateGraph
 
@@ -82,6 +82,20 @@ def respond_with_context(state: State, *, config: RunnableConfig):
     return {"messages": [response]}
 
 
+def summarize_conversation(state: State, *, config: RunnableConfig):
+    if len(state["messages"]) <= 4:
+        return {}
+
+    configuration = Configuration.from_runnable_config(config)
+    model = load_chat_model(configuration.response_model)
+    summary = state.get("summary", "")
+    prompt = configuration.summary_system_prompt.format(summary=summary)
+    summary_messages = state["messages"][:-4] + [{"role": "system", "content": prompt}]
+    delete_messages = [RemoveMessage(id=m.id) for m in state["messages"][:-4]]
+    response = model.invoke(summary_messages)
+    return {"summary": response.content, "messages": delete_messages}
+
+
 # Define the graph
 workflow = StateGraph(State)
 workflow.add_node(analyze_and_route_query)
@@ -89,13 +103,15 @@ workflow.add_node(retrieve)
 workflow.add_node(ask_for_more_info)
 workflow.add_node(respond_to_general_query)
 workflow.add_node(respond_with_context)
+workflow.add_node(summarize_conversation)
 
 workflow.add_edge(START, "analyze_and_route_query")
 workflow.add_conditional_edges("analyze_and_route_query", route_query)
 workflow.add_edge("retrieve", "respond_with_context")
-workflow.add_edge("ask_for_more_info", END)
-workflow.add_edge("respond_to_general_query", END)
-workflow.add_edge("respond_with_context", END)
+workflow.add_edge("ask_for_more_info", "summarize_conversation")
+workflow.add_edge("respond_to_general_query", "summarize_conversation")
+workflow.add_edge("respond_with_context", "summarize_conversation")
+workflow.add_edge("summarize_conversation", END)
 
 # Compile into a graph object
 graph = workflow.compile()

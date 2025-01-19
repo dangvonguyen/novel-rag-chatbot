@@ -15,3 +15,4 @@ class Router(TypedDict):
 class State(MessagesState):
     router: Router = field(default_factory=lambda: Router(type="general", logic=""))
     documents: list[Document]
+    summary: str

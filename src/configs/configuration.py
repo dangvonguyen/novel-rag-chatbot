@@ -82,6 +82,13 @@ class Configuration:
         metadata={"description": "The system prompt used for generating responses."},
     )
 
+    summary_system_prompt: str = field(
+        default=prompts.SUMMARY_SYSTEM_PROMPT,
+        metadata={
+            "description": "The system prompt used for summarizing the conversation."
+        },
+    )
+
     @classmethod
     def from_runnable_config(
         cls: Type[T], config: Optional[RunnableConfig] = None
