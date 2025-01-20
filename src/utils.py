@@ -1,4 +1,5 @@
 import re
+import json
 
 from langchain.chat_models import init_chat_model
 from langchain.embeddings import init_embeddings
@@ -9,8 +10,16 @@ from langchain_core.language_models import BaseChatModel
 from src.configs import Configuration
 
 
+def _format_doc(document: Document) -> str:
+    filtered_data = {k: document.model_dump()[k] for k in {"metadata", "page_content"}}
+    return json.dumps(filtered_data)
+
+
 def format_docs(documents: list[Document]) -> str:
-    return "\n\n".join(doc.page_content for doc in documents)
+    if not documents:
+        return ""
+    formatted = ", ".join(_format_doc(doc) for doc in documents)
+    return formatted
 
 
 def get_embedding_dimension(embedding_model: Embeddings) -> int:
