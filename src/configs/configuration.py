@@ -19,6 +19,39 @@ class Configuration:
         },
     )
 
+    # Splitter
+
+    splitter_type: Annotated[
+        Literal["semantic", "delimiter"],
+        {"__template_metadata__": {"kind": "splitter"}},
+    ] = field(
+        default="semantic",
+        metadata={
+            "description": "Strategy used to divide documents into smaller chunks or sections for processing."
+        },
+    )
+
+    chunk_size: int = field(
+        default=1500,
+        metadata={"description": "The number of tokens for each chunk."},
+    )
+
+    chunk_overlap: int = field(
+        default=300,
+        metadata={
+            "description": "The maximum number of allowed tokens to overlap between chunks."
+        },
+    )
+
+    semantic_tokenizer: Annotated[
+        str, {"__template_metadata__": {"kind": "tokenizer"}}
+    ] = field(
+        default="hiieu/halong_embedding",
+        metadata={
+            "description": "Tokenizer in huggingface used to split text into meaningful semantic units."
+        },
+    )
+
     # Retriever
 
     retriever_provider: Annotated[
