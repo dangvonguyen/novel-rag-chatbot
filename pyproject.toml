@@ -1,0 +1,24 @@
+[project]
+name = "novel-rag-chatbot"
+version = "0.1.0"
+authors = [
+    { name = "Dang Vo Nguyen" }
+]
+description = "A conversational AI chatbot leveraging Retrieval-Augmented Generation (RAG) for dynamic, context-driven dialogue and storytelling."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "bs4>=0.0.2",
+    "langchain>=0.3.19",
+    "langchain-huggingface>=0.1.2",
+    "langchain-openai>=0.3.6",
+    "langchain-pinecone>=0.2.3",
+    "langgraph>=0.2.74",
+    "python-dotenv>=1.0.1",
+    "semantic-text-splitter>=0.24.0",
+    "streamlit>=1.42.2",
+]
+
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"

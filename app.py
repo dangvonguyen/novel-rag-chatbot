@@ -1,8 +1,11 @@
 import streamlit as st
+from dotenv import find_dotenv, load_dotenv
 
 from ui.components import display_conversation, render_header, render_sidebar
 from ui.components.chat import handle_ai_response, handle_user_input, init_chat_state
 from ui.utils import load_css
+
+load_dotenv(find_dotenv(raise_error_if_not_found=True))
 
 
 def main():
