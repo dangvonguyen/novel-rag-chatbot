@@ -8,7 +8,7 @@ from ui.utils import load_css
 load_dotenv(find_dotenv(raise_error_if_not_found=True))
 
 
-def main():
+def main() -> None:
     # Set page config
     title = "Novel RAG Chatbot"
     st.set_page_config(

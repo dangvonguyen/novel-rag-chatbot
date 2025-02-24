@@ -1,12 +1,12 @@
 import streamlit as st
 
 
-def render_sidebar():
+def render_sidebar() -> None:
     with st.sidebar:
         render_new_chat()
 
 
-def render_new_chat(include_divider=False):
+def render_new_chat(include_divider: bool = False) -> None:
     if include_divider:
         st.divider()
 

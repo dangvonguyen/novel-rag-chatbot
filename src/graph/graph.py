@@ -1,4 +1,4 @@
-from typing import Literal, cast
+from typing import Any, Literal, cast
 
 from langchain_core.documents import Document
 from langchain_core.messages import BaseMessage, RemoveMessage
@@ -13,13 +13,15 @@ from src.utils import format_docs, load_chat_model
 
 def retrieve(state: State, *, config: RunnableConfig) -> dict[str, list[Document]]:
     with make_retriever(config) as retriever:
-        retrieved_docs = retriever.invoke(state["messages"][-1].content)
+        content = state["messages"][-1].content
+        query = str(content) if content is not None else ""
+        retrieved_docs = retriever.invoke(query)
     return {"documents": retrieved_docs}
 
 
 def analyze_and_route_query(
     state: State, *, config: RunnableConfig
-) -> dict[str, list[Router]]:
+) -> dict[str, Router]:
     configuration = Configuration.from_runnable_config(config)
     model = load_chat_model(configuration.response_model)
     messages = [
@@ -49,8 +51,9 @@ def ask_for_more_info(
 ) -> dict[str, list[BaseMessage]]:
     """Generate answer."""
     configuration = Configuration.from_runnable_config(config)
-    model = load_chat_model(configuration.response_model)
-    model = model.with_config({"run_name": "respond"})
+    model = load_chat_model(configuration.response_model).with_config(
+        config={"run_name": "respond"}
+    )
     prompt = configuration.more_info_system_prompt.format(
         logic=state["router"]["logic"]
     )
@@ -59,22 +62,28 @@ def ask_for_more_info(
     return {"messages": [response]}
 
 
-def respond_to_general_query(state: State, *, config: RunnableConfig):
+def respond_to_general_query(
+    state: State, *, config: RunnableConfig
+) -> dict[str, list[BaseMessage]]:
     """Generate answer."""
     configuration = Configuration.from_runnable_config(config)
-    model = load_chat_model(configuration.response_model)
-    model = model.with_config({"run_name": "respond"})
+    model = load_chat_model(configuration.response_model).with_config(
+        config={"run_name": "respond"}
+    )
     prompt = configuration.general_system_prompt.format(logic=state["router"]["logic"])
     messages = [{"role": "system", "content": prompt}] + state["messages"]
     response = model.invoke(messages)
     return {"messages": [response]}
 
 
-def respond_with_context(state: State, *, config: RunnableConfig):
+def respond_with_context(
+    state: State, *, config: RunnableConfig
+) -> dict[str, list[BaseMessage]]:
     """Generate answer."""
     configuration = Configuration.from_runnable_config(config)
-    model = load_chat_model(configuration.response_model)
-    model = model.with_config({"run_name": "respond"})
+    model = load_chat_model(configuration.response_model).with_config(
+        {"run_name": "respond"}
+    )
     context = format_docs(state["documents"])
     prompt = configuration.response_system_prompt.format(context=context)
     messages = [{"role": "system", "content": prompt}] + state["messages"]
@@ -82,7 +91,7 @@ def respond_with_context(state: State, *, config: RunnableConfig):
     return {"messages": [response]}
 
 
-def summarize_conversation(state: State, *, config: RunnableConfig):
+def summarize_conversation(state: State, *, config: RunnableConfig) -> dict[str, Any]:
     if len(state["messages"]) <= 4:
         return {}
 
@@ -91,7 +100,9 @@ def summarize_conversation(state: State, *, config: RunnableConfig):
     summary = state.get("summary", "")
     prompt = configuration.summary_system_prompt.format(summary=summary)
     summary_messages = state["messages"][:-4] + [{"role": "system", "content": prompt}]
-    delete_messages = [RemoveMessage(id=m.id) for m in state["messages"][:-4]]
+    delete_messages = [
+        RemoveMessage(id=m.id) for m in state["messages"][:-4] if m.id is not None
+    ]
     response = model.invoke(summary_messages)
     return {"summary": response.content, "messages": delete_messages}
 

@@ -1,4 +1,3 @@
-from dataclasses import dataclass, field
 from typing import Literal, TypedDict
 
 from langchain_core.documents import Document
@@ -13,6 +12,6 @@ class Router(TypedDict):
 
 
 class State(MessagesState):
-    router: Router = field(default_factory=lambda: Router(type="general", logic=""))
+    router: Router
     documents: list[Document]
     summary: str

@@ -93,7 +93,8 @@ user information.
 
 When creating or extending a summary, ensure that:
 - If a summary already exists, review it carefully and incorporate any new information \
-from the conversation. Ensure that the extended summary remains cohesive and well-organized.
+from the conversation. Ensure that the extended summary remains cohesive and \
+well-organized.
 - It highlights the specific novels, characters, plots, or themes mentioned in the \
 conversation.
 - Any unresolved questions or follow-ups required are clearly noted.

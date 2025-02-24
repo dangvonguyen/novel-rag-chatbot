@@ -2,7 +2,7 @@ from src.components.document_loaders import DocumentManager
 from src.components.retrievers import make_retriever
 
 
-def add_docs_to_store(data_dir):
+def add_docs_to_store(data_dir: str) -> None:
     """
     Add documents from the specified path to the vector store
 

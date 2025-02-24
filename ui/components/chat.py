@@ -1,5 +1,6 @@
 import asyncio
 import time
+from collections.abc import Callable
 
 import streamlit as st
 from langchain_core.messages import AIMessage, HumanMessage
@@ -7,21 +8,21 @@ from langchain_core.messages import AIMessage, HumanMessage
 from src.graph.graph import graph as chat
 
 
-def init_chat_state():
+def init_chat_state() -> None:
     if "conversation" not in st.session_state:
         st.session_state.conversation = []
     if "is_responding" not in st.session_state:
         st.session_state.is_responding = False
 
 
-def display_conversation():
+def display_conversation() -> None:
     for message in st.session_state.conversation:
         with st.chat_message("user" if isinstance(message, HumanMessage) else "ai"):
             formatted_content = message.content.replace("\n", "  \n")
             st.markdown(formatted_content, unsafe_allow_html=True)
 
 
-def handle_user_input():
+def handle_user_input() -> None:
     user_query = st.chat_input(disabled=st.session_state.is_responding)
 
     if user_query:
@@ -30,12 +31,12 @@ def handle_user_input():
         st.rerun()
 
 
-def handle_ai_response():
+def handle_ai_response() -> None:
     if st.session_state.is_responding and st.session_state.conversation:
         with st.chat_message("assistant"):
             response_placeholder = st.empty()
 
-            def update_ui(text):
+            def update_ui(text: str) -> None:
                 response_placeholder.markdown(text)
 
             full_response = asyncio.run(_stream_response(update_ui))
@@ -48,8 +49,8 @@ def handle_ai_response():
         st.rerun()
 
 
-async def _stream_response(update_ui):
-    full_response = ""
+async def _stream_response(update_ui: Callable[[str], None]) -> str:
+    full_response: str = ""
     async for event in chat.astream_events(
         {"messages": st.session_state.conversation},
         version="v2",

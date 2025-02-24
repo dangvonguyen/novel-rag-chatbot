@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field, fields
-from typing import Annotated, Any, Literal, Optional, Type, TypeVar
+from typing import Annotated, Any, Literal, TypeVar
 
 from langchain_core.runnables import RunnableConfig, ensure_config
+
 from src.components import prompts
 
 
@@ -15,7 +16,10 @@ class Configuration:
     ] = field(
         default="huggingface/hiieu/halong_embedding",
         metadata={
-            "description": "Name of the embedding model to use. Must be in the form: provider/model-name."
+            "description": (
+                "Name of the embedding model to use. "
+                "Must be in the form: provider/model-name."
+            )
         },
     )
 
@@ -27,7 +31,10 @@ class Configuration:
     ] = field(
         default="semantic",
         metadata={
-            "description": "Strategy used to divide documents into smaller chunks or sections for processing."
+            "description": (
+                "Strategy used to divide documents into smaller chunks or sections "
+                "for processing."
+            )
         },
     )
 
@@ -39,7 +46,9 @@ class Configuration:
     chunk_overlap: int = field(
         default=300,
         metadata={
-            "description": "The maximum number of allowed tokens to overlap between chunks."
+            "description": (
+                "The maximum number of allowed tokens to overlap between chunks."
+            )
         },
     )
 
@@ -48,7 +57,10 @@ class Configuration:
     ] = field(
         default="hiieu/halong_embedding",
         metadata={
-            "description": "Tokenizer in huggingface used to split text into meaningful semantic units."
+            "description": (
+                "Tokenizer in huggingface used to split text into meaningful "
+                "semantic units."
+            )
         },
     )
 
@@ -60,14 +72,20 @@ class Configuration:
     ] = field(
         default="pinecone",
         metadata={
-            "description": "The vector store provider to use for retrieval. Options are 'pinecone'."
+            "description": (
+                "The vector store provider to use for retrieval. "
+                "Options are 'pinecone'."
+            )
         },
     )
 
     search_kwargs: dict[str, Any] = field(
         default_factory=dict,
         metadata={
-            "description": "Additional keyword arguments to pass to the search function of the retriever."
+            "description": (
+                "Additional keyword arguments to pass to the search function "
+                "of the retriever."
+            )
         },
     )
 
@@ -76,14 +94,20 @@ class Configuration:
     query_model: Annotated[str, {"__template_metadata__": {"kind": "llm"}}] = field(
         default="openai/gpt-40-mini",
         metadata={
-            "description": "The language model used for processing and refining queries. Must be in the form: provider/model."
+            "description": (
+                "The language model used for processing and refining queries. "
+                "Must be in the form: provider/model."
+            )
         },
     )
 
     response_model: Annotated[str, {"__template_metadata__": {"kind": "llm"}}] = field(
         default="openai/gpt-4o-mini",
         metadata={
-            "description": "The language model used for generating responses. Must be in the form: provider/model."
+            "description": (
+                "The language model used for generating responses. "
+                "Must be in the form: provider/model."
+            )
         },
     )
 
@@ -92,14 +116,19 @@ class Configuration:
     router_system_prompt: str = field(
         default=prompts.ROUTER_SYSTEM_PROMPT,
         metadata={
-            "description": "The system prompt used for classifying user questions to route them to the correct node."
+            "description": (
+                "The system prompt used for classifying user questions to route "
+                "them to the correct node."
+            )
         },
     )
 
     more_info_system_prompt: str = field(
         default=prompts.MORE_INFO_SYSTEM_PROMPT,
         metadata={
-            "description": "The system prompt used for asking for more information from the user."
+            "description": (
+                "The system prompt used for asking for more information from the user."
+            )
         },
     )
 
@@ -124,7 +153,7 @@ class Configuration:
 
     @classmethod
     def from_runnable_config(
-        cls: Type[T], config: Optional[RunnableConfig] = None
+        cls: type[T], config: RunnableConfig | None = None
     ) -> T:
         config = ensure_config(config)
         configurable = config.get("configurable") or {}
