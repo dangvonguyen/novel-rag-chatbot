@@ -19,6 +19,30 @@ dependencies = [
     "streamlit>=1.42.2",
 ]
 
+[dependency-groups]
+dev = [
+    "mypy>=1.15.0",
+    "ruff>=0.9.7",
+]
+
+[tool.mypy]
+strict = true
+
+[tool.ruff.lint]
+select = [
+    "F",    # Pyflakes
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "I",    # isort
+    "N",    # pep8-naming
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "UP",   # pyupgrade
+]
+ignore = [
+    "B904",  # allow raising exceptions without from clause
+]
+
 [build-system]
 requires = ["setuptools>=61.0.0"]
 build-backend = "setuptools.build_meta"
